@@ -20,6 +20,9 @@ import com.openclassrooms.chatop.security.CustomUserDetailsService;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Spring Security configuration class
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -29,6 +32,11 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final CustomUserDetailsService customUserDetailsService;
 
+    /**
+     * Configures security filter chain with JWT authentication
+     * @param http HttpSecurity to configure
+     * @return Configured SecurityFilterChain
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -48,6 +56,10 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * Configures DAO authentication provider
+     * @return Configured AuthenticationProvider
+     */
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -56,11 +68,20 @@ public class SecurityConfig {
         return authProvider;
     }
 
+    /**
+     * Provides BCrypt password encoder
+     * @return PasswordEncoder instance
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Creates authentication manager
+     * @param config Authentication configuration
+     * @return AuthenticationManager instance
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();

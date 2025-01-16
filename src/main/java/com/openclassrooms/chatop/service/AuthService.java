@@ -20,6 +20,9 @@ import com.openclassrooms.chatop.security.JwtService;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Service handling authentication operations
+ */
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -29,6 +32,11 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
+    /**
+     * Registers a new user
+     * @param request Registration details
+     * @return JWT token response
+     */
     public AuthenticationResponse register(RegisterRequest request) {
         String currentTime = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
@@ -50,6 +58,12 @@ public class AuthService {
                 .build();
     }
 
+    /**
+     * Authenticates user credentials
+     * @param request Login credentials
+     * @return JWT token response
+     * @throws RuntimeException if authentication fails
+     */
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -68,6 +82,11 @@ public class AuthService {
                 .build();
     }
 
+    /**
+     * Gets currently authenticated user
+     * @return Current user entity
+     * @throws RuntimeException if user not found
+     */
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
