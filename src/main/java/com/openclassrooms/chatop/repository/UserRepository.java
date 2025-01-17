@@ -4,11 +4,13 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.openclassrooms.chatop.model.User;
+import org.springframework.stereotype.Repository;
 
 /**
  * Repository interface for User entity operations
  */
-public interface UserRepository extends JpaRepository<User, Integer> {
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
 
     /**
      * Finds user by email address

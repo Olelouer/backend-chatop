@@ -27,7 +27,7 @@ public class User implements UserDetails {
     /** User ID */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     /** User's name */
     private String name;
@@ -47,6 +47,9 @@ public class User implements UserDetails {
 
     /** Last update timestamp */
     private String updatedAt;
+
+    @OneToMany(mappedBy = "user")
+    private List<Message> messages;
 
     /**
      * @return User authorities based on role

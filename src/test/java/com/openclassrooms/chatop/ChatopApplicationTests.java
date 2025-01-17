@@ -9,5 +9,4 @@ class ChatopApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }

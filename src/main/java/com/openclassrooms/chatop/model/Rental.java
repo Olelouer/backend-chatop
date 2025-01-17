@@ -3,12 +3,14 @@ package com.openclassrooms.chatop.model;
 import lombok.Data;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Entity representing a Rental in the system
  */
 @Entity
 @Data
+@Table(name = "rentals")
 public class Rental {
     // Unique identifier for the rental
     @Id
@@ -34,19 +36,13 @@ public class Rental {
     private Long ownerId;
 
     // Timestamp of when the rental was created
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     // Timestamp of the last update
-    private LocalDateTime updatedAt;
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
-    /**
-     * Automatically set creation time when rental is first saved
-     */
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
+    @OneToMany(mappedBy = "rental")
+    private List<Message> messages;
 
     /**
      * Automatically update the update time when rental is modified
