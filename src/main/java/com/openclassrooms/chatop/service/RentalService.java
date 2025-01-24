@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 
 import com.openclassrooms.chatop.repository.RentalRepository;
 import com.openclassrooms.chatop.model.Rental;
+import com.openclassrooms.chatop.dto.RentalRequest;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -19,10 +21,19 @@ public class RentalService {
 
     /**
      * Create a new rental
-     * @param rental The rental object to create
+     * @param rentalRequest The rental object to create
      * @return The created rental with generated ID
      */
-    public Rental createRental(Rental rental) {
+    public Rental createRental(RentalRequest rentalRequest) {
+        Rental rental = Rental.builder()
+                .name(rentalRequest.getName())
+                .surface(rentalRequest.getSurface())
+                .price(rentalRequest.getPrice())
+                .description(rentalRequest.getDescription())
+                .ownerId(rentalRequest.getOwnerId())
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
         return rentalRepository.save(rental);
     }
 

@@ -1,9 +1,11 @@
 package com.openclassrooms.chatop.controller;
 
+import com.openclassrooms.chatop.dto.RentalRequest;
 import com.openclassrooms.chatop.model.Rental;
 import com.openclassrooms.chatop.service.RentalService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,8 +31,8 @@ public class RentalController {
     @Operation(summary = "Create a new rental")
     @ApiResponse(responseCode = "200", description = "Rental created successfully")
     @PostMapping
-    public ResponseEntity<Map<String, String>> createRental(@RequestBody Rental rental) {
-        rentalService.createRental(rental);
+    public ResponseEntity<Map<String, String>> createRental(@Valid @RequestBody RentalRequest rentalRequest) {
+        rentalService.createRental(rentalRequest);
         return ResponseEntity.ok(Collections.singletonMap("message", "Rental created !"));
     }
 

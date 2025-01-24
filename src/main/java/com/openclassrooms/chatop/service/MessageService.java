@@ -38,7 +38,6 @@ public class MessageService {
                 .updatedAt(LocalDateTime.now())
                 .build();
 
-        System.out.println("Sauvegarde du message");
         return messageRepository.save(message);
     }
 }
