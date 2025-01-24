@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "users")
+@Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 public class User implements UserDetails {
 
     /** User ID */
@@ -33,6 +33,7 @@ public class User implements UserDetails {
     private String name;
 
     /** User's email */
+    @Column(unique = true)
     private String email;
 
     /** Encrypted password */

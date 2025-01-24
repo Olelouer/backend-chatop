@@ -13,8 +13,8 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.Map;
+import java.time.LocalDateTime;
+
 
 @Service
 @RequiredArgsConstructor
@@ -25,17 +25,20 @@ public class MessageService {
 
     public Message createMessage(MessageRequest messageRequest) {
         User user = userRepository.findById(messageRequest.getUserId())
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + messageRequest.getUserId()));
 
         Rental rental = rentalRepository.findById(messageRequest.getRentalId())
-                .orElseThrow(() -> new EntityNotFoundException("Rental not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Rental not found with id: " + messageRequest.getRentalId()));
 
         Message message = Message.builder()
                 .message(messageRequest.getMessage())
                 .user(user)
                 .rental(rental)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
 
+        System.out.println("Sauvegarde du message");
         return messageRepository.save(message);
     }
 }

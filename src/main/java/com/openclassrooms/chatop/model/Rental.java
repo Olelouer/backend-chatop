@@ -33,12 +33,15 @@ public class Rental {
     private String description;
 
     // ID of the owner/user who posted this rental
+    @JoinColumn(name = "owner_id", nullable = false)
     private Long ownerId;
 
     // Timestamp of when the rental was created
+    @Column(name= "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
     // Timestamp of the last update
+    @Column(name= "updated_at", nullable = false)
     private LocalDateTime updatedAt = LocalDateTime.now();
 
     @OneToMany(mappedBy = "rental")
