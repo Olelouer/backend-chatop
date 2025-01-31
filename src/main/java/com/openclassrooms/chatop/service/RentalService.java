@@ -1,18 +1,16 @@
 package com.openclassrooms.chatop.service;
 
 import com.openclassrooms.chatop.model.User;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import lombok.RequiredArgsConstructor;
-
 import com.openclassrooms.chatop.repository.RentalRepository;
 import com.openclassrooms.chatop.model.Rental;
 import com.openclassrooms.chatop.dto.RentalRequest;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
-
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,10 +20,6 @@ import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Service layer for Rental operations
- * Handles business logic between Controller and Repository
- */
 @Service
 @RequiredArgsConstructor
 public class RentalService {
@@ -40,6 +34,7 @@ public class RentalService {
      * @return The created rental with generated ID
      */
     public Rental createRental(RentalRequest rentalRequest) throws IOException {
+        // Vérification de l'authentification
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new RuntimeException("User not authenticated");
@@ -48,8 +43,8 @@ public class RentalService {
         User user = (User) authentication.getPrincipal();
         Long ownerId = user.getId();
 
+        // Gestion de l'image
         String pictureUrl = null;
-
         if (rentalRequest.getPicture() != null && !rentalRequest.getPicture().isEmpty()) {
             // Save file
             Files.createDirectories(Paths.get(uploadDir));
@@ -57,9 +52,10 @@ public class RentalService {
             String uniqueFileName = System.currentTimeMillis() + "_" + fileName;
             Path targetLocation = Paths.get(uploadDir).toAbsolutePath().normalize().resolve(uniqueFileName);
             Files.copy(rentalRequest.getPicture().getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-            pictureUrl = targetLocation.toString();
+            pictureUrl = "http://localhost:3001/uploads/" + uniqueFileName;
         }
 
+        // Création du rental
         Rental rental = Rental.builder()
                 .name(rentalRequest.getName())
                 .surface(rentalRequest.getSurface())
@@ -97,6 +93,7 @@ public class RentalService {
      * Update an existing rental
      * @param id ID of the rental to update
      * @param rentalDetails New rental details
+     * @param picture New picture file (optional)
      * @return The updated rental
      * @throws RuntimeException if rental not found
      */
@@ -109,23 +106,42 @@ public class RentalService {
         rental.setDescription(rentalDetails.getDescription());
         rental.setUpdatedAt(LocalDateTime.now());
 
-        // Si une nouvelle image est fournie
+        // Gestion de la nouvelle image si fournie
         if (picture != null && !picture.isEmpty()) {
-            // Supprimer l'ancienne image si elle existe
+            // Suppression de l'ancienne image
             if (rental.getPicture() != null) {
-                Path oldPicture = Paths.get(rental.getPicture());
-                Files.deleteIfExists(oldPicture);
+                deleteImage(rental.getPicture());
             }
-
-            // Sauvegarder la nouvelle image
-            String fileName = StringUtils.cleanPath(picture.getOriginalFilename());
-            String uniqueFileName = System.currentTimeMillis() + "_" + fileName;
-            Path targetLocation = Paths.get(uploadDir).toAbsolutePath().normalize().resolve(uniqueFileName);
-            Files.copy(picture.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-            rental.setPicture(targetLocation.toString());
+            // Sauvegarde de la nouvelle image
+            rental.setPicture(saveImage(picture));
         }
 
         return rentalRepository.save(rental);
     }
 
+    /**
+     * Save an image file and return its URL
+     * @param file The image file to save
+     * @return The URL of the saved image
+     */
+    private String saveImage(MultipartFile file) throws IOException {
+        Files.createDirectories(Paths.get(uploadDir));
+        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        String uniqueFileName = System.currentTimeMillis() + "_" + fileName;
+        Path targetLocation = Paths.get(uploadDir).toAbsolutePath().normalize().resolve(uniqueFileName);
+        Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+
+        return uniqueFileName;  // On retourne uniquement le nom du fichier
+    }
+
+    /**
+     * Delete an image file
+     * @param fileName The name of the file to delete
+     */
+    private void deleteImage(String fileName) throws IOException {
+        if (fileName != null && !fileName.isEmpty()) {
+            Path filePath = Paths.get(uploadDir).toAbsolutePath().normalize().resolve(fileName);
+            Files.deleteIfExists(filePath);
+        }
+    }
 }
