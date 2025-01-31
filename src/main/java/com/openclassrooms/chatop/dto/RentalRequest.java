@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -21,12 +24,8 @@ public class RentalRequest {
     private Integer price;
 
     /** URL or path to the rental's picture */
-    private String picture;
+    private MultipartFile picture;
 
     /** Detailed description of the rental */
     private String description;
-
-    /** ID of the owner/user who posted this rental */
-    @JsonProperty("owner_id")
-    private Long ownerId;
 }

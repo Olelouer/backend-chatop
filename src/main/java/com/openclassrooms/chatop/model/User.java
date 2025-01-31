@@ -3,6 +3,8 @@ package com.openclassrooms.chatop.model;
 import java.util.Collection;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -44,13 +46,16 @@ public class User implements UserDetails {
     private Role role;
 
     /** Creation timestamp */
+    @Column(name= "created_at", nullable = false)
+    @JsonProperty("created_at")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private String createdAt;
 
     /** Last update timestamp */
+    @Column(name= "updated_at", nullable = false)
+    @JsonProperty("updated_at")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private String updatedAt;
-
-    @OneToMany(mappedBy = "user")
-    private List<Message> messages;
 
     /**
      * @return User authorities based on role

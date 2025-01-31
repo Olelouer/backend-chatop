@@ -7,9 +7,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +25,9 @@ import java.util.Map;
 @RequestMapping("/api/rentals")
 @RequiredArgsConstructor
 public class RentalController {
-    // RentalService handles business logic
+    /**
+     * RentalService handles business logic
+     */
     private final RentalService rentalService;
 
     /**
@@ -31,9 +37,28 @@ public class RentalController {
     @Operation(summary = "Create a new rental")
     @ApiResponse(responseCode = "200", description = "Rental created successfully")
     @PostMapping
-    public ResponseEntity<Map<String, String>> createRental(@Valid @RequestBody RentalRequest rentalRequest) {
-        rentalService.createRental(rentalRequest);
-        return ResponseEntity.ok(Collections.singletonMap("message", "Rental created !"));
+    public ResponseEntity<Map<String, String>> createRental(
+            @RequestParam("name") String name,
+            @RequestParam("surface") Integer surface,
+            @RequestParam("price") Integer price,
+            @RequestParam("description") String description,
+            @RequestParam(value = "picture", required = false) MultipartFile picture) {
+
+        RentalRequest rentalRequest = RentalRequest.builder()
+                .name(name)
+                .surface(surface)
+                .price(price)
+                .description(description)
+                .picture(picture)
+                .build();
+
+        try {
+            rentalService.createRental(rentalRequest);
+            return ResponseEntity.ok(Collections.singletonMap("message", "Rental created !"));
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("message", "Error uploading file"));
+        }
     }
 
     /**
@@ -63,16 +88,32 @@ public class RentalController {
     /**
      * Update an existing rental
      * @param id ID of the rental to update
-     * @param rental New rental details
      * @return Message confirming update
      */
     @Operation(summary = "Update a rental")
     @ApiResponse(responseCode = "200", description = "Rental updated successfully")
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}")
     public ResponseEntity<Map<String, String>> updateRental(
             @PathVariable Long id,
-            @RequestBody Rental rental) {
-        rentalService.updateRental(id, rental);
-        return ResponseEntity.ok(Collections.singletonMap("message", "Rental updated !"));
+            @RequestParam("name") String name,
+            @RequestParam("surface") Integer surface,
+            @RequestParam("price") Integer price,
+            @RequestParam("description") String description,
+            @RequestParam(value = "picture", required = false) MultipartFile picture) {
+
+        Rental rentalDetails = Rental.builder()
+                .name(name)
+                .surface(surface)
+                .price(price)
+                .description(description)
+                .build();
+
+        try {
+            rentalService.updateRental(id, rentalDetails, picture);
+            return ResponseEntity.ok(Collections.singletonMap("message", "Rental updated !"));
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("message", "Error updating file"));
+        }
     }
 }
