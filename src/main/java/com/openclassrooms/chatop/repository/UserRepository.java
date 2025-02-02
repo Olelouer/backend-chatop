@@ -7,15 +7,15 @@ import com.openclassrooms.chatop.model.User;
 import org.springframework.stereotype.Repository;
 
 /**
- * Repository interface for User entity operations
+ * Repository interface for User entity operations.
  */
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
     /**
-     * Finds user by email address
-     * @param email The email to search for
-     * @return Optional containing user if found
+     * Finds a user by their email address.
+     * @param email The email to search for.
+     * @return Optional containing the user if found.
      */
     Optional<User> findByEmail(String email);
 }

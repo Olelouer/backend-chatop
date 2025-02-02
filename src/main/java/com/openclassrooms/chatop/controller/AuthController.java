@@ -9,42 +9,58 @@ import com.openclassrooms.chatop.dto.AuthenticationResponse;
 import com.openclassrooms.chatop.dto.RegisterRequest;
 import com.openclassrooms.chatop.service.AuthService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Controller handling authentication endpoints
+ * Controller handling authentication endpoints.
  */
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@Tag(name = "Authentication", description = "Endpoints for user authentication and registration")
 public class AuthController {
 
     private final AuthService authService;
 
     /**
-     * Registers a new user
-     * @param request User registration details
-     * @return Authentication response with JWT token
+     * Registers a new user.
+     *
+     * @param request User registration details.
+     * @return Authentication response with JWT token.
      */
+    @Operation(summary = "Register a new user", description = "Creates a new user and returns a JWT token")
+    @ApiResponse(responseCode = "200", description = "User registered successfully")
+    @ApiResponse(responseCode = "400", description = "Invalid request parameters")
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
         return ResponseEntity.ok(authService.register(request));
     }
 
     /**
-     * Authenticates a user
-     * @param request Login credentials
-     * @return Authentication response with JWT token
+     * Authenticates a user.
+     *
+     * @param request Login credentials.
+     * @return Authentication response with JWT token.
      */
+    @Operation(summary = "Authenticate user and generate JWT token", description = "Validates user credentials and returns a JWT token")
+    @ApiResponse(responseCode = "200", description = "User authenticated successfully")
+    @ApiResponse(responseCode = "401", description = "Invalid credentials")
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
         return ResponseEntity.ok(authService.authenticate(request));
     }
 
     /**
-     * Gets current authenticated user
-     * @return Current user details
+     * Gets the currently authenticated user.
+     *
+     * @return Current user details.
      */
+    @Operation(summary = "Get current authenticated user details", description = "Retrieves the currently logged-in user based on the JWT token")
+    @ApiResponse(responseCode = "200", description = "Authenticated user details retrieved successfully")
+    @ApiResponse(responseCode = "401", description = "User not authenticated")
     @GetMapping("/me")
     public ResponseEntity<User> getCurrentUser() {
         return ResponseEntity.ok(authService.getCurrentUser());

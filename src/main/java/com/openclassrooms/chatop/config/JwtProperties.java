@@ -6,18 +6,25 @@ import org.springframework.context.annotation.Configuration;
 import lombok.Data;
 
 /**
- * JWT configuration properties
+ * Configuration properties for JWT (JSON Web Token) settings.
  */
 @Configuration
 @ConfigurationProperties(prefix = "application.security.jwt")
 @Data
 public class JwtProperties {
-    /** Secret key for JWT signature */
+
+    /**
+     * Secret key used for JWT signature.
+     */
     private String secretKey;
 
-    /** Token expiration time in ms */
+    /**
+     * Token expiration time in milliseconds.
+     */
     private long expiration;
 
-    /** Refresh token expiration time in ms */
+    /**
+     * Refresh token expiration time in milliseconds.
+     */
     private long refreshExpiration;
 }

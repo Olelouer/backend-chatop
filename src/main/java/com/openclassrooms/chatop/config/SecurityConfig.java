@@ -21,7 +21,7 @@ import com.openclassrooms.chatop.security.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Spring Security configuration class
+ * Spring Security configuration class.
  */
 @Configuration
 @EnableWebSecurity
@@ -33,9 +33,10 @@ public class SecurityConfig {
     private final CustomUserDetailsService customUserDetailsService;
 
     /**
-     * Configures security filter chain with JWT authentication
-     * @param http HttpSecurity to configure
-     * @return Configured SecurityFilterChain
+     * Configures security filter chain with JWT authentication.
+     * @param http HttpSecurity to configure.
+     * @return Configured SecurityFilterChain.
+     * @throws Exception If an error occurs during configuration.
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -58,8 +59,8 @@ public class SecurityConfig {
     }
 
     /**
-     * Configures DAO authentication provider
-     * @return Configured AuthenticationProvider
+     * Configures DAO authentication provider.
+     * @return Configured AuthenticationProvider.
      */
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -70,8 +71,8 @@ public class SecurityConfig {
     }
 
     /**
-     * Provides BCrypt password encoder
-     * @return PasswordEncoder instance
+     * Provides BCrypt password encoder.
+     * @return PasswordEncoder instance.
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -79,9 +80,10 @@ public class SecurityConfig {
     }
 
     /**
-     * Creates authentication manager
-     * @param config Authentication configuration
-     * @return AuthenticationManager instance
+     * Creates authentication manager.
+     * @param config Authentication configuration.
+     * @return AuthenticationManager instance.
+     * @throws Exception If an error occurs during configuration.
      */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {

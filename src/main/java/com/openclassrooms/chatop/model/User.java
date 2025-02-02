@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +17,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * User entity implementing Spring Security UserDetails
+ * Entity representing a User in the system, implementing Spring Security's UserDetails interface.
  */
 @Data
 @Builder
@@ -24,41 +25,64 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
+@Schema(description = "Entity representing a registered user in the system")
 public class User implements UserDetails {
 
-    /** User ID */
+    /**
+     * Unique identifier for the user.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "Unique identifier of the user", example = "1")
     private Long id;
 
-    /** User's name */
+    /**
+     * User's name.
+     */
+    @Schema(description = "Full name of the user", example = "John Doe")
     private String name;
 
-    /** User's email */
+    /**
+     * User's email (must be unique).
+     */
     @Column(unique = true)
+    @Schema(description = "User's unique email address", example = "john.doe@example.com")
     private String email;
 
-    /** Encrypted password */
+    /**
+     * Encrypted password for authentication.
+     */
+    @Schema(description = "Encrypted user password", example = "$2a$10$7QX... (hashed password)")
     private String password;
 
-    /** User role */
+    /**
+     * Role assigned to the user.
+     */
     @Enumerated(EnumType.STRING)
+    @Schema(description = "User's role in the system", example = "USER")
     private Role role;
 
-    /** Creation timestamp */
+    /**
+     * Timestamp of when the user was created.
+     */
     @Column(name= "created_at", nullable = false)
     @JsonProperty("created_at")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd HH:mm:ss")
+    @Schema(description = "Timestamp when the rental was created", example = "2024/02/01 12:00:00")
     private String createdAt;
 
-    /** Last update timestamp */
+    /**
+     * Timestamp of the last update to the user record.
+     */
     @Column(name= "updated_at", nullable = false)
     @JsonProperty("updated_at")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd HH:mm:ss")
+    @Schema(description = "Timestamp when the rental was created", example = "2024/02/01 12:00:00")
     private String updatedAt;
 
     /**
-     * @return User authorities based on role
+     * Returns the authorities granted to the user based on their role.
+     * @return A collection of granted authorities.
      */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -66,7 +90,8 @@ public class User implements UserDetails {
     }
 
     /**
-     * @return Email as username
+     * Returns the email as the username for authentication purposes.
+     * @return The user's email.
      */
     @Override
     public String getUsername() {
@@ -74,7 +99,8 @@ public class User implements UserDetails {
     }
 
     /**
-     * @return User's encrypted password
+     * Returns the encrypted password of the user.
+     * @return The encrypted password.
      */
     @Override
     public String getPassword() {
@@ -82,8 +108,8 @@ public class User implements UserDetails {
     }
 
     /**
-     * Checks if account is not expired
-     * @return true as accounts never expire in this implementation
+     * Indicates whether the user's account has expired.
+     * @return true, as accounts never expire in this implementation.
      */
     @Override
     public boolean isAccountNonExpired() {
@@ -91,8 +117,8 @@ public class User implements UserDetails {
     }
 
     /**
-     * Checks if account is not locked
-     * @return true as accounts are never locked in this implementation
+     * Indicates whether the user is locked or unlocked.
+     * @return true, as accounts are never locked in this implementation.
      */
     @Override
     public boolean isAccountNonLocked() {
@@ -100,8 +126,8 @@ public class User implements UserDetails {
     }
 
     /**
-     * Checks if credentials are not expired
-     * @return true as credentials never expire in this implementation
+     * Indicates whether the user's credentials (password) have expired.
+     * @return true, as credentials never expire in this implementation.
      */
     @Override
     public boolean isCredentialsNonExpired() {
@@ -109,8 +135,8 @@ public class User implements UserDetails {
     }
 
     /**
-     * Checks if user is enabled
-     * @return true as all users are enabled in this implementation
+     * Indicates whether the user is enabled or disabled.
+     * @return true, as all users are enabled in this implementation.
      */
     @Override
     public boolean isEnabled() {

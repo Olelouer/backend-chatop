@@ -1,13 +1,12 @@
 package com.openclassrooms.chatop.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-
 import com.openclassrooms.chatop.model.Rental;
 import org.springframework.stereotype.Repository;
 
 /**
- * Interface to handle database operations for Rentals
- * Extends JpaRepository to get basic CRUD operations
+ * Repository interface for managing Rental entity operations.
+ * Extends JpaRepository to provide basic CRUD functionality.
  */
 @Repository
 public interface RentalRepository extends JpaRepository<Rental, Long> {
