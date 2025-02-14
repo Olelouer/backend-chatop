@@ -13,6 +13,7 @@ public class SwaggerConfig {
 
     /**
      * Configures OpenAPI documentation for the Chatop API.
+     *
      * @return OpenAPI configuration with API metadata.
      */
     @Bean

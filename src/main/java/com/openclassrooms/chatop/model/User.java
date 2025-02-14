@@ -82,6 +82,7 @@ public class User implements UserDetails {
 
     /**
      * Returns the authorities granted to the user based on their role.
+     *
      * @return A collection of granted authorities.
      */
     @Override
@@ -91,6 +92,7 @@ public class User implements UserDetails {
 
     /**
      * Returns the email as the username for authentication purposes.
+     *
      * @return The user's email.
      */
     @Override
@@ -100,6 +102,7 @@ public class User implements UserDetails {
 
     /**
      * Returns the encrypted password of the user.
+     *
      * @return The encrypted password.
      */
     @Override
@@ -109,6 +112,7 @@ public class User implements UserDetails {
 
     /**
      * Indicates whether the user's account has expired.
+     *
      * @return true, as accounts never expire in this implementation.
      */
     @Override
@@ -118,6 +122,7 @@ public class User implements UserDetails {
 
     /**
      * Indicates whether the user is locked or unlocked.
+     *
      * @return true, as accounts are never locked in this implementation.
      */
     @Override
@@ -127,6 +132,7 @@ public class User implements UserDetails {
 
     /**
      * Indicates whether the user's credentials (password) have expired.
+     *
      * @return true, as credentials never expire in this implementation.
      */
     @Override
@@ -136,6 +142,7 @@ public class User implements UserDetails {
 
     /**
      * Indicates whether the user is enabled or disabled.
+     *
      * @return true, as all users are enabled in this implementation.
      */
     @Override

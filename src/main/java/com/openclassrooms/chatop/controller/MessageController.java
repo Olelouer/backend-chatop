@@ -33,6 +33,7 @@ public class MessageController {
 
     /**
      * Endpoint to create a new message.
+     * 
      * @param messageRequest The request payload containing message details.
      * @return Response entity containing a confirmation message.
      */

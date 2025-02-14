@@ -20,6 +20,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     /**
      * Loads a user by email address for authentication.
+     *
      * @param email User's email
      * @return UserDetails if found
      * @throws UsernameNotFoundException if user is not found

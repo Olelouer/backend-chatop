@@ -33,6 +33,7 @@ public class RentalService {
 
     /**
      * Creates a new rental listing.
+     *
      * @param rentalRequest The request containing rental details.
      * @return The created Rental object.
      * @throws IOException If there is an error saving the rental image.
@@ -68,6 +69,7 @@ public class RentalService {
 
     /**
      * Retrieves all rental listings.
+     *
      * @return A list of all available rentals.
      */
     public List<Rental> getAllRentals() {
@@ -76,6 +78,7 @@ public class RentalService {
 
     /**
      * Retrieves a rental by its ID.
+     *
      * @param id The ID of the rental.
      * @return The rental object if found.
      */
@@ -86,6 +89,7 @@ public class RentalService {
 
     /**
      * Updates an existing rental listing.
+     *
      * @param id The ID of the rental to update.
      * @param rentalDetails The updated rental details.
      * @param picture The updated rental image.
@@ -113,6 +117,7 @@ public class RentalService {
 
     /**
      * Saves an uploaded image to the server.
+     *
      * @param file The image file to save.
      * @return The file name of the saved image.
      * @throws IOException If there is an error saving the image.
@@ -129,6 +134,7 @@ public class RentalService {
 
     /**
      * Deletes an image file from the server.
+     *
      * @param fileName The name of the file to delete.
      * @throws IOException If there is an error deleting the file.
      */

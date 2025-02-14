@@ -34,6 +34,7 @@ public class SecurityConfig {
 
     /**
      * Configures security filter chain with JWT authentication.
+     *
      * @param http HttpSecurity to configure.
      * @return Configured SecurityFilterChain.
      * @throws Exception If an error occurs during configuration.
@@ -60,6 +61,7 @@ public class SecurityConfig {
 
     /**
      * Configures DAO authentication provider.
+     *
      * @return Configured AuthenticationProvider.
      */
     @Bean
@@ -72,6 +74,7 @@ public class SecurityConfig {
 
     /**
      * Provides BCrypt password encoder.
+     *
      * @return PasswordEncoder instance.
      */
     @Bean
@@ -81,6 +84,7 @@ public class SecurityConfig {
 
     /**
      * Creates authentication manager.
+     *
      * @param config Authentication configuration.
      * @return AuthenticationManager instance.
      * @throws Exception If an error occurs during configuration.

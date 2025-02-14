@@ -29,6 +29,7 @@ public class JwtService {
 
     /**
      * Extracts the username (email) from a given JWT token.
+     *
      * @param token JWT token
      * @return Extracted username
      */
@@ -38,6 +39,7 @@ public class JwtService {
 
     /**
      * Extracts a specific claim from a given JWT token.
+     *
      * @param token JWT token
      * @param claimsResolver Function to extract claim
      * @return Extracted claim value
@@ -49,6 +51,7 @@ public class JwtService {
 
     /**
      * Generates a JWT token for the given user details.
+     *
      * @param userDetails User details
      * @return Generated JWT token
      */
@@ -58,6 +61,7 @@ public class JwtService {
 
     /**
      * Generates a JWT token with additional claims.
+     *
      * @param extraClaims Additional claims to include in the token
      * @param userDetails User details
      * @return Generated JWT token
@@ -75,6 +79,7 @@ public class JwtService {
 
     /**
      * Validates a JWT token by checking its expiration and matching username.
+     *
      * @param token JWT token
      * @param userDetails User details
      * @return true if token is valid, otherwise false
@@ -86,6 +91,7 @@ public class JwtService {
 
     /**
      * Checks if a JWT token is expired.
+     *
      * @param token JWT token
      * @return true if token is expired, otherwise false
      */
@@ -95,6 +101,7 @@ public class JwtService {
 
     /**
      * Extracts the expiration date from a JWT token.
+     *
      * @param token JWT token
      * @return Expiration date of the token
      */
@@ -104,6 +111,7 @@ public class JwtService {
 
     /**
      * Extracts all claims from a JWT token.
+     *
      * @param token JWT token
      * @return Claims object containing all claims
      */
@@ -118,6 +126,7 @@ public class JwtService {
 
     /**
      * Retrieves the signing key used for JWT token encryption.
+     *
      * @return HMAC-SHA key used for signing the JWT token
      */
     private Key getSignInKey() {

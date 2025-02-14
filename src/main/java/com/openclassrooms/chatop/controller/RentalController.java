@@ -33,6 +33,7 @@ public class RentalController {
 
     /**
      * Create a new rental.
+     *
      * @param name Name of the rental.
      * @param surface Surface area of the rental.
      * @param price Price of the rental.
@@ -71,6 +72,7 @@ public class RentalController {
 
     /**
      * Get all available rentals.
+     *
      * @return List of all rentals wrapped in a map.
      */
     @Operation(summary = "Get all rentals", description = "Retrieves a list of all available rental properties")
@@ -83,6 +85,7 @@ public class RentalController {
 
     /**
      * Get a specific rental by its ID.
+     *
      * @param id ID of the rental to find.
      * @return The rental if found.
      */
@@ -96,6 +99,7 @@ public class RentalController {
 
     /**
      * Update an existing rental.
+     *
      * @param id ID of the rental to update.
      * @param name Updated name of the rental.
      * @param surface Updated surface area of the rental.

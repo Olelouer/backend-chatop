@@ -17,6 +17,7 @@ public class FileService {
 
     /**
      * Retrieves a file as a Resource.
+     *
      * @param filename Name of the file.
      * @return File as a Resource.
      * @throws IOException If file is not found or cannot be read.
@@ -33,6 +34,7 @@ public class FileService {
 
     /**
      * Determines the content type of a file.
+     *
      * @param filePath Path of the file.
      * @return MIME type of the file.
      * @throws IOException If unable to determine type.

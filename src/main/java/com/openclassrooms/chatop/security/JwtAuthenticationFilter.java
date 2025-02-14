@@ -39,6 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     /**
      * Determines if the request should be filtered.
+     *
      * @param request Current HTTP request
      * @return true if the path is excluded from filtering
      */
@@ -50,6 +51,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     /**
      * Performs JWT authentication by validating the token and setting the security context.
+     *
      * @param request Current HTTP request
      * @param response Current HTTP response
      * @param filterChain Filter chain to continue processing

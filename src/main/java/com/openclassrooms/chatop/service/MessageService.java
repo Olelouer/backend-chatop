@@ -24,6 +24,7 @@ public class MessageService {
 
     /**
      * Creates a new message and associates it with a user and rental.
+     *
      * @param messageRequest The request object containing message details.
      * @return The saved message entity.
      * @throws EntityNotFoundException If the user or rental is not found.

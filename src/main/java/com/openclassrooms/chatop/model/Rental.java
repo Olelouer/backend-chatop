@@ -66,6 +66,7 @@ public class Rental {
      * ID of the owner/user who posted this rental.
      */
     @Column(name = "owner_id", nullable = false)
+    @JsonProperty("owner_id")
     @Schema(description = "ID of the owner who posted the rental", example = "10")
     private Long ownerId;
 
