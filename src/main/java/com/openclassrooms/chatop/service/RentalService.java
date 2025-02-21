@@ -4,6 +4,7 @@ import com.openclassrooms.chatop.model.User;
 import com.openclassrooms.chatop.repository.RentalRepository;
 import com.openclassrooms.chatop.model.Rental;
 import com.openclassrooms.chatop.dto.RentalRequest;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -81,28 +82,29 @@ public class RentalService {
      *
      * @param id The ID of the rental.
      * @return The rental object if found.
+     * @throws EntityNotFoundException if the rental is not found.
      */
     public Rental getRentalById(Long id) {
         return rentalRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Rental not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Rental not found with id: " + id));
     }
 
     /**
      * Updates an existing rental listing.
      *
      * @param id The ID of the rental to update.
-     * @param rentalDetails The updated rental details.
+     * @param rentalRequest The updated rental details.
      * @param picture The updated rental image.
      * @return The updated rental object.
      * @throws IOException If there is an error saving the image.
      */
-    public Rental updateRental(Long id, Rental rentalDetails, MultipartFile picture) throws IOException {
+    public Rental updateRental(Long id, RentalRequest rentalRequest, MultipartFile picture) throws IOException {
         Rental rental = getRentalById(id);
 
-        rental.setName(rentalDetails.getName());
-        rental.setSurface(rentalDetails.getSurface());
-        rental.setPrice(rentalDetails.getPrice());
-        rental.setDescription(rentalDetails.getDescription());
+        rental.setName(rentalRequest.getName());
+        rental.setSurface(rentalRequest.getSurface());
+        rental.setPrice(rentalRequest.getPrice());
+        rental.setDescription(rentalRequest.getDescription());
         rental.setUpdatedAt(LocalDateTime.now());
 
         if (picture != null && !picture.isEmpty()) {

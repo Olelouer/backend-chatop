@@ -3,6 +3,8 @@ package com.openclassrooms.chatop.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,18 +36,21 @@ public class Rental {
     /**
      * Name of the rental property.
      */
+    @NotBlank(message = "The name cannot be empty")
     @Schema(description = "Name of the rental property", example = "Cozy Apartment")
     private String name;
 
     /**
      * Surface area of the rental in square meters.
      */
+    @NotNull(message = "The surface cannot be empty")
     @Schema(description = "Surface area of the rental in square meters", example = "50")
     private Integer surface;
 
     /**
      * Price of the rental.
      */
+    @NotNull(message = "The price cannot be empty")
     @Schema(description = "Price of the rental", example = "1200")
     private Integer price;
 
@@ -58,6 +63,7 @@ public class Rental {
     /**
      * Detailed description of the rental.
      */
+    @NotBlank(message = "The description cannot be empty")
     @Column(columnDefinition = "TEXT")
     @Schema(description = "Detailed description of the rental", example = "A beautiful apartment in the city center with all amenities.")
     private String description;

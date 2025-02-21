@@ -121,7 +121,7 @@ public class RentalController {
             @RequestParam("description") String description,
             @RequestParam(value = "picture", required = false) MultipartFile picture) {
 
-        Rental rentalDetails = Rental.builder()
+        RentalRequest rentalRequest = RentalRequest.builder()
                 .name(name)
                 .surface(surface)
                 .price(price)
@@ -129,7 +129,7 @@ public class RentalController {
                 .build();
 
         try {
-            rentalService.updateRental(id, rentalDetails, picture);
+            rentalService.updateRental(id, rentalRequest, picture);
             return ResponseEntity.ok(Collections.singletonMap("message", "Rental updated !"));
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
