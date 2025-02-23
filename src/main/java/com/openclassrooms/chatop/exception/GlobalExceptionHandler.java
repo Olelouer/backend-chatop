@@ -15,10 +15,20 @@ import jakarta.persistence.EntityNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Global exception handler that provides centralized exception handling across all @RequestMapping methods.
+ * Provides consistent error responses for different types of exceptions in the application.
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // Gestion des erreurs de validation (@Valid, etc.)
+    /**
+     * Handles validation errors that occur during @Valid validation.
+     * Processes field-level validation errors and returns them in a map.
+     *
+     * @param ex The validation exception containing binding errors
+     * @return Map of field names to error messages with 400 Bad Request status
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
@@ -30,7 +40,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
-    // Gestion des IllegalArgumentException (mauvaise requête)
+    /**
+     * Handles illegal argument exceptions for invalid input parameters.
+     * Returns a 400 Bad Request status with the error message.
+     *
+     * @param ex The IllegalArgumentException that was thrown
+     * @return Error message with 400 Bad Request status
+     */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, String>> handleIllegalArgumentException(IllegalArgumentException ex) {
         Map<String, String> error = new HashMap<>();
@@ -38,38 +54,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
-    // Handler for EntityNotFoundException that returns 404
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleEntityNotFoundException(EntityNotFoundException ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("error", ex.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
-    }
-
-    // Gestion des accès interdits (403 Forbidden)
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<Map<String, String>> handleAccessDeniedException(AccessDeniedException ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("error", "Forbidden: " + ex.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
-    }
-
-    // Gestion des erreurs d'authentification (401 Unauthorized)
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<Map<String, String>> handleAuthenticationException(AuthenticationException ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("error", "Unauthorized: " + ex.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
-    }
-
-    // Gestion globale de toutes les autres exceptions (500 Internal Server Error)
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, String>> handleAllExceptions(Exception ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("error", "Internal server error: " + ex.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
+    /**
+     * Handles constraint violation exceptions that occur during validation.
+     * Processes property-level constraint violations and returns them in a map.
+     *
+     * @param ex The ConstraintViolationException that was thrown
+     * @return Map of property paths to error messages with 400 Bad Request status
+     */
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Map<String, String>> handleConstraintViolation(ConstraintViolationException ex) {
         Map<String, String> errors = new HashMap<>();
@@ -77,5 +68,61 @@ public class GlobalExceptionHandler {
             errors.put(violation.getPropertyPath().toString(), violation.getMessage());
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+    }
+
+    /**
+     * Handles cases where requested entities are not found in the database.
+     * Returns a 404 Not Found status with the error message.
+     *
+     * @param ex The EntityNotFoundException that was thrown
+     * @return Error message with 404 Not Found status
+     */
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleEntityNotFoundException(EntityNotFoundException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * Handles access denied exceptions for unauthorized access attempts.
+     * Returns a 403 Forbidden status with the error message.
+     *
+     * @param ex The AccessDeniedException that was thrown
+     * @return Error message with 403 Forbidden status
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Map<String, String>> handleAccessDeniedException(AccessDeniedException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", "Forbidden: " + ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
+    }
+
+    /**
+     * Handles authentication exceptions for unauthenticated access attempts.
+     * Returns a 401 Unauthorized status with the error message.
+     *
+     * @param ex The AuthenticationException that was thrown
+     * @return Error message with 401 Unauthorized status
+     */
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<Map<String, String>> handleAuthenticationException(AuthenticationException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", "Unauthorized: " + ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+    }
+
+    /**
+     * Fallback handler for all unhandled exceptions.
+     * Returns a 500 Internal Server Error status with a generic error message.
+     *
+     * @param ex The unhandled Exception that was thrown
+     * @return Error message with 500 Internal Server Error status
+     */
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, String>> handleAllExceptions(Exception ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", "Internal server error: " + ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

@@ -1,9 +1,13 @@
 package com.openclassrooms.chatop.service;
 
+import com.openclassrooms.chatop.dto.GlobalMessageResponse;
+import com.openclassrooms.chatop.dto.RentalListResponse;
+import com.openclassrooms.chatop.dto.RentalRequest;
+import com.openclassrooms.chatop.dto.RentalResponse;
+import com.openclassrooms.chatop.mapper.RentalMapper;
+import com.openclassrooms.chatop.model.Rental;
 import com.openclassrooms.chatop.model.User;
 import com.openclassrooms.chatop.repository.RentalRepository;
-import com.openclassrooms.chatop.model.Rental;
-import com.openclassrooms.chatop.dto.RentalRequest;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +23,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * Service class for managing rental operations.
@@ -28,6 +31,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RentalService {
     private final RentalRepository rentalRepository;
+    private final RentalMapper rentalMapper;
 
     @Value("${file.upload-dir}")
     private String uploadDir;
@@ -39,33 +43,30 @@ public class RentalService {
      * @return The created Rental object.
      * @throws IOException If there is an error saving the rental image.
      */
-    public Rental createRental(RentalRequest rentalRequest) throws IOException {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new RuntimeException("User not authenticated");
+    public GlobalMessageResponse createRental(RentalRequest rentalRequest) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication == null || !authentication.isAuthenticated()) {
+                throw new RuntimeException("User not authenticated");
+            }
+
+            User user = (User) authentication.getPrincipal();
+            String pictureUrl = null;
+            if (rentalRequest.getPicture() != null && !rentalRequest.getPicture().isEmpty()) {
+                String uniqueFileName = saveImage(rentalRequest.getPicture());
+                pictureUrl = "http://localhost:3001/uploads/" + uniqueFileName;
+            }
+
+            // Use mapper instead of direct builder
+            Rental rental = rentalMapper.toEntity(rentalRequest);
+            rental.setOwnerId(user.getId());
+            rental.setPicture(pictureUrl);
+
+            rentalRepository.save(rental);
+            return new GlobalMessageResponse("Rental created !");
+        } catch (IOException e) {
+            throw new RuntimeException("Error creating rental: " + e.getMessage());
         }
-
-        User user = (User) authentication.getPrincipal();
-        Long ownerId = user.getId();
-
-        String pictureUrl = null;
-        if (rentalRequest.getPicture() != null && !rentalRequest.getPicture().isEmpty()) {
-            String uniqueFileName = saveImage(rentalRequest.getPicture());
-            pictureUrl = "http://localhost:3001/uploads/" + uniqueFileName;
-        }
-
-        Rental rental = Rental.builder()
-                .name(rentalRequest.getName())
-                .surface(rentalRequest.getSurface())
-                .price(rentalRequest.getPrice())
-                .picture(pictureUrl)
-                .description(rentalRequest.getDescription())
-                .ownerId(ownerId)
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-
-        return rentalRepository.save(rental);
     }
 
     /**
@@ -73,20 +74,14 @@ public class RentalService {
      *
      * @return A list of all available rentals.
      */
-    public List<Rental> getAllRentals() {
-        return rentalRepository.findAll();
+    public RentalListResponse getAllRentals() {
+        return new RentalListResponse(rentalMapper.toResponseList(rentalRepository.findAll()));
     }
 
-    /**
-     * Retrieves a rental by its ID.
-     *
-     * @param id The ID of the rental.
-     * @return The rental object if found.
-     * @throws EntityNotFoundException if the rental is not found.
-     */
-    public Rental getRentalById(Long id) {
-        return rentalRepository.findById(id)
+    public RentalResponse getRentalById(Long id) {
+        Rental rental = rentalRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Rental not found with id: " + id));
+        return rentalMapper.toResponse(rental);
     }
 
     /**
@@ -98,48 +93,40 @@ public class RentalService {
      * @return The updated rental object.
      * @throws IOException If there is an error saving the image.
      */
-    public Rental updateRental(Long id, RentalRequest rentalRequest, MultipartFile picture) throws IOException {
-        Rental rental = getRentalById(id);
+    public GlobalMessageResponse updateRental(Long id, RentalRequest rentalRequest, MultipartFile picture) {
+        try {
+            Rental rental = rentalRepository.findById(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Rental not found with id: " + id));
 
-        rental.setName(rentalRequest.getName());
-        rental.setSurface(rentalRequest.getSurface());
-        rental.setPrice(rentalRequest.getPrice());
-        rental.setDescription(rentalRequest.getDescription());
-        rental.setUpdatedAt(LocalDateTime.now());
+            // Use mapper to update fields
+            Rental updatedRental = rentalMapper.updateEntity(rental, rentalRequest);
 
-        if (picture != null && !picture.isEmpty()) {
-            if (rental.getPicture() != null) {
-                deleteImage(rental.getPicture());
+            // Handle picture separately since it requires file operations
+            if (picture != null && !picture.isEmpty()) {
+                if (rental.getPicture() != null) {
+                    deleteImage(rental.getPicture());
+                }
+                updatedRental.setPicture(saveImage(picture));
             }
-            rental.setPicture(saveImage(picture));
-        }
 
-        return rentalRepository.save(rental);
+            updatedRental.setUpdatedAt(LocalDateTime.now());
+            rentalRepository.save(updatedRental);
+
+            return new GlobalMessageResponse("Rental updated !");
+        } catch (IOException e) {
+            throw new RuntimeException("Error updating rental: " + e.getMessage());
+        }
     }
 
-    /**
-     * Saves an uploaded image to the server.
-     *
-     * @param file The image file to save.
-     * @return The file name of the saved image.
-     * @throws IOException If there is an error saving the image.
-     */
     private String saveImage(MultipartFile file) throws IOException {
         Files.createDirectories(Paths.get(uploadDir));
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         String uniqueFileName = System.currentTimeMillis() + "_" + fileName;
         Path targetLocation = Paths.get(uploadDir).toAbsolutePath().normalize().resolve(uniqueFileName);
         Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-
         return uniqueFileName;
     }
 
-    /**
-     * Deletes an image file from the server.
-     *
-     * @param fileName The name of the file to delete.
-     * @throws IOException If there is an error deleting the file.
-     */
     private void deleteImage(String fileName) throws IOException {
         if (fileName != null && !fileName.isEmpty()) {
             Path filePath = Paths.get(uploadDir).toAbsolutePath().normalize().resolve(fileName);

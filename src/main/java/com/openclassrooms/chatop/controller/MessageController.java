@@ -1,6 +1,7 @@
 package com.openclassrooms.chatop.controller;
 
 import com.openclassrooms.chatop.dto.MessageRequest;
+import com.openclassrooms.chatop.dto.GlobalMessageResponse;
 import com.openclassrooms.chatop.service.MessageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -8,13 +9,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import java.util.Collections;
-import java.util.Map;
+import org.springframework.web.bind.annotation.*;
 
+/**
+ * REST Controller handling messages operations (CRUD).
+ */
 @RestController
 @RequestMapping("/api/messages")
 @RequiredArgsConstructor
@@ -34,8 +33,7 @@ public class MessageController {
     @ApiResponse(responseCode = "200", description = "Message created successfully")
     @ApiResponse(responseCode = "400", description = "Invalid request parameters")
     @PostMapping
-    public ResponseEntity<Map<String, String>> createMessage(@Valid @RequestBody MessageRequest messageRequest) {
-        messageService.createMessage(messageRequest);
-        return ResponseEntity.ok(Collections.singletonMap("message", "Message sent successfully"));
+    public ResponseEntity<GlobalMessageResponse> createMessage(@Valid @RequestBody MessageRequest messageRequest) {
+        return ResponseEntity.ok(messageService.createMessage(messageRequest));
     }
 }

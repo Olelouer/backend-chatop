@@ -1,21 +1,17 @@
 package com.openclassrooms.chatop.controller;
 
+import com.openclassrooms.chatop.dto.GlobalMessageResponse;
+import com.openclassrooms.chatop.dto.RentalListResponse;
 import com.openclassrooms.chatop.dto.RentalRequest;
-import com.openclassrooms.chatop.model.Rental;
+import com.openclassrooms.chatop.dto.RentalResponse;
 import com.openclassrooms.chatop.service.RentalService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 /**
  * REST Controller handling rental operations (CRUD).
@@ -26,9 +22,6 @@ import java.util.Map;
 @Tag(name = "Rentals", description = "Endpoints for managing rental properties")
 public class RentalController {
 
-    /**
-     * RentalService handles business logic.
-     */
     private final RentalService rentalService;
 
     /**
@@ -42,11 +35,9 @@ public class RentalController {
      * @return Message confirming creation.
      */
     @Operation(summary = "Create a new rental", description = "Adds a new rental property to the system")
-    @ApiResponse(responseCode = "200", description = "Rental created successfully")
-    @ApiResponse(responseCode = "400", description = "Invalid input parameters")
-    @ApiResponse(responseCode = "500", description = "Error uploading file")
+    @ApiResponse(responseCode = "200", description = "Rental created !")
     @PostMapping
-    public ResponseEntity<Map<String, String>> createRental(
+    public ResponseEntity<GlobalMessageResponse> createRental(
             @RequestParam("name") String name,
             @RequestParam("surface") Integer surface,
             @RequestParam("price") Integer price,
@@ -61,13 +52,7 @@ public class RentalController {
                 .picture(picture)
                 .build();
 
-        try {
-            rentalService.createRental(rentalRequest);
-            return ResponseEntity.ok(Collections.singletonMap("message", "Rental created !"));
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Collections.singletonMap("message", "Error uploading file"));
-        }
+        return ResponseEntity.ok(rentalService.createRental(rentalRequest));
     }
 
     /**
@@ -78,9 +63,8 @@ public class RentalController {
     @Operation(summary = "Get all rentals", description = "Retrieves a list of all available rental properties")
     @ApiResponse(responseCode = "200", description = "List of all rentals")
     @GetMapping
-    public ResponseEntity<Map<String, List<Rental>>> getAllRentals() {
-        List<Rental> rentals = rentalService.getAllRentals();
-        return ResponseEntity.ok(Collections.singletonMap("rentals", rentals));
+    public ResponseEntity<RentalListResponse> getAllRentals() {
+        return ResponseEntity.ok(rentalService.getAllRentals());
     }
 
     /**
@@ -91,9 +75,8 @@ public class RentalController {
      */
     @Operation(summary = "Get a rental by ID", description = "Retrieves details of a specific rental property by ID")
     @ApiResponse(responseCode = "200", description = "Rental details retrieved successfully")
-    @ApiResponse(responseCode = "404", description = "Rental not found")
     @GetMapping("/{id}")
-    public ResponseEntity<Rental> getRentalById(@PathVariable Long id) {
+    public ResponseEntity<RentalResponse> getRentalById(@PathVariable Long id) {
         return ResponseEntity.ok(rentalService.getRentalById(id));
     }
 
@@ -109,11 +92,9 @@ public class RentalController {
      * @return Message confirming update.
      */
     @Operation(summary = "Update a rental", description = "Updates details of an existing rental property")
-    @ApiResponse(responseCode = "200", description = "Rental updated successfully")
-    @ApiResponse(responseCode = "400", description = "Invalid input parameters")
-    @ApiResponse(responseCode = "500", description = "Error updating file")
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<Map<String, String>> updateRental(
+    @ApiResponse(responseCode = "200", description = "Rental updated !")
+    @PutMapping("/{id}")
+    public ResponseEntity<GlobalMessageResponse> updateRental(
             @PathVariable Long id,
             @RequestParam("name") String name,
             @RequestParam("surface") Integer surface,
@@ -128,12 +109,6 @@ public class RentalController {
                 .description(description)
                 .build();
 
-        try {
-            rentalService.updateRental(id, rentalRequest, picture);
-            return ResponseEntity.ok(Collections.singletonMap("message", "Rental updated !"));
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Collections.singletonMap("message", "Error updating file"));
-        }
+        return ResponseEntity.ok(rentalService.updateRental(id, rentalRequest, picture));
     }
 }
