@@ -1,5 +1,6 @@
 package com.openclassrooms.chatop.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,9 +22,11 @@ public class MessageResponse {
     private String message;
 
     @Schema(description = "ID of the user who sent the message", example = "1")
+    @JsonProperty("user_id")
     private Long userId;
 
     @Schema(description = "ID of the rental associated with the message", example = "1")
+    @JsonProperty("rental_id")
     private Long rentalId;
 
     @Schema(description = "Timestamp when the message was created")

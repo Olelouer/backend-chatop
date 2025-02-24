@@ -1,5 +1,6 @@
 package com.openclassrooms.chatop.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,11 +34,14 @@ public class RentalResponse {
     private String description;
 
     @Schema(description = "ID of the owner who posted the rental", example = "10")
+    @JsonProperty("owner_id")
     private Long ownerId;
 
     @Schema(description = "Timestamp when the rental was created", example = "2024/02/01 12:00:00")
+    @JsonProperty("created_at")
     private LocalDateTime createdAt;
 
     @Schema(description = "Timestamp of the last update", example = "2024/02/02 15:30:00")
+    @JsonProperty("updated_at")
     private LocalDateTime updatedAt;
 }

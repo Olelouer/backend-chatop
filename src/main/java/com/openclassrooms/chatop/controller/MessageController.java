@@ -4,6 +4,8 @@ import com.openclassrooms.chatop.dto.MessageRequest;
 import com.openclassrooms.chatop.dto.GlobalMessageResponse;
 import com.openclassrooms.chatop.service.MessageService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -31,7 +33,8 @@ public class MessageController {
      */
     @Operation(summary = "Create a new message", description = "Allows users to send a message related to a rental")
     @ApiResponse(responseCode = "200", description = "Message created successfully")
-    @ApiResponse(responseCode = "400", description = "Invalid request parameters")
+    @ApiResponse(responseCode = "400", description = "Invalid request parameters !", content = @Content(schema = @Schema(hidden = true)))
+    @ApiResponse(responseCode = "401", description = "Unauthorized !", content = @Content(schema = @Schema(hidden = true)))
     @PostMapping
     public ResponseEntity<GlobalMessageResponse> createMessage(@Valid @RequestBody MessageRequest messageRequest) {
         return ResponseEntity.ok(messageService.createMessage(messageRequest));

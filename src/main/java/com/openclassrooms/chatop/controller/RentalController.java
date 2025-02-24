@@ -6,6 +6,8 @@ import com.openclassrooms.chatop.dto.RentalRequest;
 import com.openclassrooms.chatop.dto.RentalResponse;
 import com.openclassrooms.chatop.service.RentalService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +38,8 @@ public class RentalController {
      */
     @Operation(summary = "Create a new rental", description = "Adds a new rental property to the system")
     @ApiResponse(responseCode = "200", description = "Rental created !")
+    @ApiResponse(responseCode = "400", description = "Invalid request parameters !", content = @Content(schema = @Schema(hidden = true)))
+    @ApiResponse(responseCode = "401", description = "Unauthorized !", content = @Content(schema = @Schema(hidden = true)))
     @PostMapping
     public ResponseEntity<GlobalMessageResponse> createRental(
             @RequestParam("name") String name,
@@ -62,6 +66,7 @@ public class RentalController {
      */
     @Operation(summary = "Get all rentals", description = "Retrieves a list of all available rental properties")
     @ApiResponse(responseCode = "200", description = "List of all rentals")
+    @ApiResponse(responseCode = "401", description = "Unauthorized !", content = @Content(schema = @Schema(hidden = true)))
     @GetMapping
     public ResponseEntity<RentalListResponse> getAllRentals() {
         return ResponseEntity.ok(rentalService.getAllRentals());
@@ -75,6 +80,8 @@ public class RentalController {
      */
     @Operation(summary = "Get a rental by ID", description = "Retrieves details of a specific rental property by ID")
     @ApiResponse(responseCode = "200", description = "Rental details retrieved successfully")
+    @ApiResponse(responseCode = "401", description = "Unauthorized !", content = @Content(schema = @Schema(hidden = true)))
+    @ApiResponse(responseCode = "404", description = "Rental not found !", content = @Content(schema = @Schema(hidden = true)))
     @GetMapping("/{id}")
     public ResponseEntity<RentalResponse> getRentalById(@PathVariable Long id) {
         return ResponseEntity.ok(rentalService.getRentalById(id));
@@ -93,6 +100,8 @@ public class RentalController {
      */
     @Operation(summary = "Update a rental", description = "Updates details of an existing rental property")
     @ApiResponse(responseCode = "200", description = "Rental updated !")
+    @ApiResponse(responseCode = "404", description = "Rental not found !", content = @Content(schema = @Schema(hidden = true)))
+    @ApiResponse(responseCode = "401", description = "Unauthorized !", content = @Content(schema = @Schema(hidden = true)))
     @PutMapping("/{id}")
     public ResponseEntity<GlobalMessageResponse> updateRental(
             @PathVariable Long id,
