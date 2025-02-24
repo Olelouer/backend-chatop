@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import jakarta.persistence.EntityNotFoundException;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -114,15 +115,12 @@ public class GlobalExceptionHandler {
 
     /**
      * Fallback handler for all unhandled exceptions.
-     * Returns a 500 Internal Server Error status with a generic error message.
+     * Returns a 401 Unauthorized status with no message body, as per project requirements.
      *
-     * @param ex The unhandled Exception that was thrown
-     * @return Error message with 500 Internal Server Error status
+     * @return Empty response with 401 Unauthorized status
      */
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, String>> handleAllExceptions(Exception ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("error", "Internal server error: " + ex.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<Void> handleAllExceptions() {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 }

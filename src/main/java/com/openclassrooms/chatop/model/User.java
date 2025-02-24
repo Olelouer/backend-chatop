@@ -6,6 +6,8 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -52,6 +54,9 @@ public class User implements UserDetails {
     /**
      * Encrypted password for authentication.
      */
+
+    @NotNull(message = "Password is required")
+    @NotBlank(message = "Password cannot be empty")
     @Schema(description = "Encrypted user password", example = "$2a$10$7QX... (hashed password)")
     private String password;
 
