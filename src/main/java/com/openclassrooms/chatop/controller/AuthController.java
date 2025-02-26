@@ -1,6 +1,7 @@
 package com.openclassrooms.chatop.controller;
 
-import com.openclassrooms.chatop.model.User;
+import com.openclassrooms.chatop.mapper.UserMapper;
+
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import com.openclassrooms.chatop.dto.AuthenticationRequest;
 import com.openclassrooms.chatop.dto.AuthenticationResponse;
 import com.openclassrooms.chatop.dto.RegisterRequest;
+import com.openclassrooms.chatop.dto.UserResponse;
 import com.openclassrooms.chatop.service.AuthService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 public class AuthController {
 
     private final AuthService authService;
+    private final UserMapper userMapper;
 
     /**
      * Registers a new user.
@@ -66,7 +69,6 @@ public class AuthController {
     @ApiResponse(responseCode = "200", description = "Authenticated user details retrieved successfully")
     @ApiResponse(responseCode = "401", description = "User not authenticated !", content = @Content(schema = @Schema(hidden = true)))
     @GetMapping("/me")
-    public ResponseEntity<User> getCurrentUser() {
-        return ResponseEntity.ok(authService.getCurrentUser());
-    }
-}
+    public ResponseEntity<UserResponse> getCurrentUser() {
+        return ResponseEntity.ok(userMapper.toDto(authService.getCurrentUser()));
+    }}

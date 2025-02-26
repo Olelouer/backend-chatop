@@ -1,7 +1,7 @@
 package com.openclassrooms.chatop.service;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import com.openclassrooms.chatop.dto.UserResponse;
+import com.openclassrooms.chatop.mapper.UserMapper;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import com.openclassrooms.chatop.dto.AuthenticationRequest;
 import com.openclassrooms.chatop.dto.AuthenticationResponse;
 import com.openclassrooms.chatop.dto.RegisterRequest;
-import com.openclassrooms.chatop.model.Role;
 import com.openclassrooms.chatop.model.User;
 import com.openclassrooms.chatop.repository.UserRepository;
 import com.openclassrooms.chatop.security.JwtService;
@@ -29,9 +28,9 @@ import lombok.RequiredArgsConstructor;
 public class AuthService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final UserMapper userMapper;
 
     /**
      * Registers a new user, encodes their password, assigns a role, and generates a JWT token.
@@ -40,20 +39,14 @@ public class AuthService {
      * @return AuthenticationResponse containing the generated JWT token.
      */
     public AuthenticationResponse register(RegisterRequest request) {
-        String currentTime = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        // Use the mapper to convert from DTO to entity
+        User user = userMapper.toEntity(request);
 
-        var user = User.builder()
-                .email(request.getEmail())
-                .name(request.getName())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
-                .createdAt(currentTime)
-                .updatedAt(currentTime)
-                .build();
-
+        // Save the user entity
         userRepository.save(user);
 
-        var jwtToken = jwtService.generateToken(user);
+        // Generate JWT token
+        String jwtToken = jwtService.generateToken(user);
 
         return AuthenticationResponse.builder()
                 .token(jwtToken)
